@@ -3,8 +3,14 @@
 load(['scottboms\Promote\PlatformPromoter' => __DIR__ . '/classes/PlatformPromoter.php']);
 
 use ScottBoms\Promote\PlatformPromoter;
-use Kirby\Cms\App as Kirby;
+use Composer\Semver\Semver;
 use Kirby\Http\Remote;
+use Kirby\Cms\App as Kirby;
+
+// validate Kirby version
+if (Semver::satisfies(Kirby::version() ?? '0.0.0', '~5.0') === false) {
+	throw new Exception('Promoter Button requires Kirby 5');
+}
 
 Kirby::plugin('scottboms/promote', 
   extends: [

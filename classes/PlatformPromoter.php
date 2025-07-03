@@ -83,7 +83,7 @@ class PlatformPromoter
       'password' => $password,
     ]);
 
-    // Native cURL fallback
+    // Use native cURL, json_encode/decode seemed to fail
     $ch = curl_init($baseUrl . '/xrpc/com.atproto.server.createSession');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
@@ -152,32 +152,50 @@ class PlatformPromoter
     $token = $this->config['linkedin']['token'];
     $author = $this->config['linkedin']['author'];
 
-    $response = Remote::post('https://api.linkedin.com/v2/ugcPosts', [
-      'headers' => [
-        'Authorization' => 'Bearer ' . $token,
-        'X-Restli-Protocol-Version' => '2.0.0',
-        'Content-Type' => 'application/json',
-      ],
-      'data' => [
-        'author' => $author,
-        'lifecycleState' => 'PUBLISHED',
-        'specificContent' => [
-          'com.linkedin.ugc.ShareContent' => [
-            'shareCommentary' => [
-              'text' => $text
-            ],
-            'shareMediaCategory' => 'NONE'
-          ]
-        ],
-        'visibility' => [
-          'com.linkedin.ugc.MemberNetworkVisibility' => 'PUBLIC'
+    $payload = [
+      'author' => $this->config['linkedin']['author'],
+      'lifecycleState' => 'PUBLISHED',
+      'specificContent' => [
+        'com.linkedin.ugc.ShareContent' => [
+          'shareCommentary' => [
+            'text' => $text
+          ],
+          'shareMediaCategory' => 'NONE'
         ]
       ],
+      'visibility' => [
+        'com.linkedin.ugc.MemberNetworkVisibility' => 'PUBLIC'
+      ]
+    ];
+
+    // $this->log('linkedin', 'debug', 'Post JSON: ' . json_encode($payload));
+
+    $json = json_encode($payload);
+    if ($json === false) {
+      $this->log('linkedin', 'error', 'Failed to encode payload: ' . json_last_error_msg());
+      throw new Exception('LinkedIn post failed: JSON encoding error');
+    }
+
+    $ch = curl_init('https://api.linkedin.com/v2/ugcPosts');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      'Authorization: Bearer ' . $token,
+      'Content-Type: application/json',
+      'X-Restli-Protocol-Version: 2.0.0',
+      'Content-Length: ' . strlen($json),
     ]);
 
-    if ($response->code() !== 201) {
-      $this->log('linkedin', 'error', 'Post failed: ' . $response->content());
-      throw new Exception('LinkedIn post failed: ' . $response->content());
+    $responseBody = curl_exec($ch);
+    $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    $this->log('linkedin', 'debug', 'Response Code: ' . $responseCode);
+    // $this->log('linkedin', 'debug', 'Response Body: ' . $responseBody);
+
+    if ($responseCode !== 201) {
+      throw new Exception('LinkedIn post failed: ' . $responseBody);
     }
 
     $this->log('linkedin', 'info', 'Post succeeded.');
@@ -194,9 +212,7 @@ class PlatformPromoter
 
     // Ensure log directory exists
     Dir::make($logDir);
-
     $entry = Str::unhtml("[$timestamp][$level][$platform] $message") . PHP_EOL;
-
     F::append($logFile, $entry);
   }
 

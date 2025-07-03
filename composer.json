@@ -1,0 +1,33 @@
+{
+	"name": "scottboms/promote-button",
+	"description": "Promote Panel Button for Kirby.",
+	"type": "kirby-plugin",
+	"homepage": "https://github.com/scottboms/kirby-promote-button",
+	"authors": [
+		{
+			"name": "Scott Boms",
+			"email": "plugins@scottboms.com",
+      "homepage": "https://scottboms.com"
+		}
+	],
+  "support": {
+    "docs": "https://github.com/scottboms/kirby-promote-button/blob/main/README.md",
+    "source": "https://github.com/scottboms/kirby-promote-button"
+  },
+  "license": "MIT",
+  "keywords": [
+    "kirby",
+    "kirby-cms",
+    "kirby-plugin",
+    "kirby4",
+    "kirby5"
+  ],
+  "require": {
+    "php": ">8.1.0 <8.4.0",
+    "getkirby/cms": "^4.0 || ^5.0",
+    "getkirby/composer-installer": "^1.1"
+  },
+  "extra": {
+    "installer-name": "promote-button"
+  }
+}
