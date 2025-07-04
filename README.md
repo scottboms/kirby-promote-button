@@ -50,8 +50,9 @@ You can place these in `/site/config/config.php` or `/site/config/env.php`
 
 #### Tokens and Passwords
 
-To post to [Mastodon](https://mastodon.social/settings/applications), [Bluesky](https://bsky.app/settings/app-passwords) or [LinkedIn](https://linkedin.com/developers/apps), you will need the necessary authentication tokens or app passwords. Because this information is sensitive, it's recommended that you do not include these specific settings in your `/site/config/config.php` file and instead place them in either the [env.php config file](https://getkirby.com/docs/guide/configuration#multi-environment-setup__deployment-configuration) which should be explicitly ignored by [git](https://git-scm.com) or other version control systems or .
+To post to [Mastodon](https://mastodon.social/settings/applications), [Bluesky](https://bsky.app/settings/app-passwords) or [LinkedIn](https://linkedin.com/developers/apps), you will need the necessary authentication tokens or app passwords. Because this information is sensitive, it's recommended that you do not include these specific settings in your `/site/config/config.php` file and instead place them in the [env.php config file](https://getkirby.com/docs/guide/configuration#multi-environment-setup__deployment-configuration) which should be added to a `.gitignore` file to avoid sharing this info publicly.
 
+    <?php
     return [
       'scottboms.promote.mastodon.token' => 'MASTODON_API_TOKEN',
       'scottboms.promote.bluesky.password' => 'BLUESKY_APP_PASSWORD',

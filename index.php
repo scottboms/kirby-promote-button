@@ -12,7 +12,7 @@ if (Semver::satisfies(Kirby::version() ?? '0.0.0', '~5.0') === false) {
 	throw new Exception('Promoter Button requires Kirby 5');
 }
 
-Kirby::plugin('scottboms/promote', 
+Kirby::plugin('scottboms/promote',
   extends: [
     'areas' => [
       'site' => [
@@ -30,7 +30,7 @@ Kirby::plugin('scottboms/promote',
           'promote' => [
             'load' => function () {
               $page = page(get('page'));
-              
+
               return [
                 'component' => 'k-form-dialog',
                 'props' => [
@@ -48,23 +48,30 @@ Kirby::plugin('scottboms/promote',
                       'type' => 'checkboxes',
                       'columns' => max(1, min(3, count(option('scottboms.promote.services', [])))), // 1–3 columns
                       'options' => array_map(function ($service) {
+                        $labelMap = [
+                          'mastodon' => 'Mastodon',
+                          'bluesky' => 'Bluesky',
+                          'linkedin' => 'LinkedIn',
+                          // Add more if needed
+                        ];
+
                         return [
                           'value' => $service,
-                          'text' => $service
+                          'text' => $labelMap[$service] ?? ucfirst($service)
                         ];
                       }, option('scottboms.promote.services', []))
                     ],
                   ],
                   'value' => [
                     'text' => 'Just posted ' . $page->title()->value() . ' ' . (
-                        option('scottboms.promote.host_url') 
-                          ? rtrim(option('scottboms.promote.host_url'), '/') . '/' . $page->uri() 
+                        option('scottboms.promote.host_url')
+                          ? rtrim(option('scottboms.promote.host_url'), '/') . '/' . $page->uri()
                           : $page->url()
                     ),
                     'platforms' => [
-                      'mastodon', 
+                      'mastodon',
                       'bluesky',
-                      'linkedin', 
+                      'linkedin',
                     ],
                   ],
                   'submitButton' => [
@@ -102,7 +109,7 @@ Kirby::plugin('scottboms/promote',
       ],
     ],
   ],
-  
+
   info: [
     'homepage' => 'https://scottboms.com',
     'version' => '1.0.0',
