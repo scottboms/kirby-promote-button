@@ -11,6 +11,7 @@ use Exception;
 class PlatformPromoter
 {
   protected $config;
+  protected const USER_AGENT = 'KirbyPromote/1.0 (+https://scottboms.com)';
   protected bool $cacheEnabled = true;
   protected int $cacheTimeout = 3600; // 1 hour in seconds
 
@@ -29,7 +30,7 @@ class PlatformPromoter
         'handle' => option('scottboms.promote.bluesky.handle'),
         'password' => option('scottboms.promote.bluesky.password'),
       ],
-        
+
     ];
   }
 
@@ -63,11 +64,12 @@ class PlatformPromoter
 
     // Ensure proper encoding
     $text = mb_convert_encoding($text, 'UTF-8', 'auto');
+    $idempotencyKey = hash('sha256', $text); // hash of the content
 
     $payloadArray = [
       'status' => $text,
       'language' => 'en',
-      'visibility' => 'private'
+      'visibility' => 'public'
     ];
 
     $payload = json_encode($payloadArray);
@@ -88,6 +90,8 @@ class PlatformPromoter
       'Authorization: Bearer ' . $token,
       'Content-Type: application/json',
       'Content-Length: ' . strlen($payload),
+      'Idempotency-Key: ' . $idempotencyKey,
+      'User-Agent: ' . self::USER_AGENT,
     ]);
 
     $response = curl_exec($ch);
@@ -125,7 +129,8 @@ class PlatformPromoter
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
       'Content-Type: application/json',
-      'Content-Length: ' . strlen($payload)
+      'Content-Length: ' . strlen($payload),
+      'User-Agent: ' . self::USER_AGENT
     ]);
 
     $response = curl_exec($ch);
@@ -164,6 +169,7 @@ class PlatformPromoter
       'Content-Type: application/json',
       'Authorization: Bearer ' . $accessJwt,
       'Content-Length: ' . strlen($postPayload),
+      'User-Agent: ' . self::USER_AGENT
     ]);
 
     $postResponse = curl_exec($ch);
@@ -213,7 +219,7 @@ class PlatformPromoter
     if (!isset($data['sub'])) {
       throw new \Exception('LinkedIn /userinfo response missing "sub" field.');
     }
-    
+
     $urn = 'urn:li:person:' . $data['sub'];
 
     if ($this->cacheEnabled) {
@@ -263,6 +269,7 @@ class PlatformPromoter
       'Content-Type: application/json',
       'X-Restli-Protocol-Version: 2.0.0',
       'Content-Length: ' . strlen($json),
+      'User-Agent: ' . self::USER_AGENT
     ]);
 
     $responseBody = curl_exec($ch);

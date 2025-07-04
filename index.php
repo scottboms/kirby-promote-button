@@ -112,7 +112,7 @@ Kirby::plugin('scottboms/promote',
 
   info: [
     'homepage' => 'https://scottboms.com',
-    'version' => '1.0.0',
+    'version' => '1.0.1',
     'license' => 'MIT',
     'authors' => [
       [
