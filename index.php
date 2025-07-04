@@ -56,7 +56,11 @@ Kirby::plugin('scottboms/promote',
                     ],
                   ],
                   'value' => [
-                    'text' => 'Something new "' . $page->title()->value() . '": ' . $page->url(),
+                    'text' => 'Just posted ' . $page->title()->value() . ' ' . (
+                        option('scottboms.promote.host_url') 
+                          ? rtrim(option('scottboms.promote.host_url'), '/') . '/' . $page->uri() 
+                          : $page->url()
+                    ),
                     'platforms' => [
                       'mastodon', 
                       'bluesky',
