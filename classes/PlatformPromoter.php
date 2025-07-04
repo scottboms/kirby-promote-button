@@ -11,6 +11,8 @@ use Exception;
 class PlatformPromoter
 {
   protected $config;
+  protected bool $cacheEnabled = true;
+  protected int $cacheTimeout = 3600; // 1 hour in seconds
 
   public function __construct()
   {
@@ -21,9 +23,9 @@ class PlatformPromoter
       ],
       'linkedin' => [
         'token' => option('scottboms.promote.linkedin.token'),
-        'author' => option('scottboms.promote.linkedin.author'),
       ],
       'bluesky' => [
+        'base_url' => option('scottboms.promote.bluesky.base_url', 'https://bsky.social'),
         'handle' => option('scottboms.promote.bluesky.handle'),
         'password' => option('scottboms.promote.bluesky.password'),
       ],
@@ -31,6 +33,8 @@ class PlatformPromoter
     ];
   }
 
+  // --------------------------------------------------------------------------
+  // Posting...
   public function post(string $platform, string $text): void
   {
     if (!method_exists($this, $platform)) {
@@ -44,26 +48,57 @@ class PlatformPromoter
   // Mastodon
   protected function mastodon(string $text): void
   {
+    $text = trim($text); // remove whitespace
+
+    if ($text === '') {
+      // $this->log('mastodon', 'error', 'Aborted: status text is empty');
+      throw new Exception('Mastodon post failed: status text is empty');
+    }
+
     $token = $this->config['mastodon']['token'];
     $baseUrl = rtrim($this->config['mastodon']['url'], '/');
     $url = $baseUrl . '/api/v1/statuses';
 
-    $response = Remote::post($url, [
-      'headers' => [
-        'Authorization' => 'Bearer ' . $token,
-        //'Idempotency-Key: ' . $uuid,
-        'Content-Type' => 'application/json',
-      ],
-      'body' => json_encode([
-        'status' => $text,
-        'language' => 'en',
-        'visibility' => 'private'
-      ]),
+    // $this->log('mastodon', 'debug', 'Posting status: ' . $text);
+
+    // Ensure proper encoding
+    $text = mb_convert_encoding($text, 'UTF-8', 'auto');
+
+    $payloadArray = [
+      'status' => $text,
+      'language' => 'en',
+      'visibility' => 'private'
+    ];
+
+    $payload = json_encode($payloadArray);
+
+    if ($payload === false) {
+      // $this->log('mastodon', 'error', 'Failed to encode payload: ' . json_last_error_msg());
+      throw new Exception('Mastodon post failed: JSON encoding error');
+    }
+
+    $this->log('mastodon', 'debug', 'Final payload: ' . $payload);
+
+    // Use cURL to post to Mastodon
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      'Authorization: Bearer ' . $token,
+      'Content-Type: application/json',
+      'Content-Length: ' . strlen($payload),
     ]);
 
-    if (!in_array($response->code(), [200, 202])) {
-      $this->log('mastodon', 'error', 'Post failed with code ' . $response->code() . ': ' . $response->content());
-      throw new Exception('Mastodon post failed with code ' . $response->code() . ': ' . $response->content());
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    $this->log('mastodon', 'debug', 'Response HTTP code: ' . $httpCode);
+    // $this->log('mastodon', 'debug', 'Response: ' . $response);
+
+    if (!in_array($httpCode, [200, 202])) {
+      throw new Exception('Mastodon post failed with code ' . $httpCode . ': ' . $response);
     }
 
     $this->log('mastodon', 'info', 'Post succeeded.');
@@ -98,7 +133,7 @@ class PlatformPromoter
     curl_close($ch);
 
     $this->log('bluesky', 'debug', "cURL auth code: $httpCode");
-    //$this->log('bluesky', 'debug', "cURL auth response: $response");
+    // $this->log('bluesky', 'debug', "cURL auth response: $response");
 
     $authData = json_decode($response, true);
 
@@ -136,7 +171,7 @@ class PlatformPromoter
     curl_close($ch);
 
     $this->log('bluesky', 'debug', 'Post HTTP code: ' . $postHttpCode);
-    //$this->log('bluesky', 'debug', 'Post response: ' . $postResponse);
+    // $this->log('bluesky', 'debug', 'Post response: ' . $postResponse);
 
     if ($postHttpCode !== 200) {
       throw new Exception('Bluesky post failed: ' . $postResponse);
@@ -147,13 +182,56 @@ class PlatformPromoter
 
   // --------------------------------------------------------------------------
   // LinkedIn
+  protected function getLinkedInAuthorUrn(): string
+  {
+    $cache = kirby()->cache('linkedin');
+    $cacheKey = 'author_urn';
+
+    // Check cache first
+    if($this->cacheEnabled) {
+      $cachedUrn = $cache->get($cacheKey);
+      if($cachedUrn !== null) {
+        $this->log('linked', 'debug', 'Using cached LinkedIn author URN');
+        return $cachedUrn;
+      }
+    }
+
+    $token = $this->config['linkedin']['token'];
+
+    $response = Remote::get('https://api.linkedin.com/v2/userinfo', [
+      'headers' => [
+        'Authorization' => 'Bearer ' . $token,
+        'Content-Type' => 'application/json',
+      ],
+    ]);
+
+    if ($response->code() !== 200) {
+      throw new Exception('LinkedIn /userinfo failed: ' . $response->content());
+    }
+
+    $data = json_decode($response->content(), true);
+    if (!isset($data['sub'])) {
+      throw new \Exception('LinkedIn /userinfo response missing "sub" field.');
+    }
+    
+    $urn = 'urn:li:person:' . $data['sub'];
+
+    if ($this->cacheEnabled) {
+      $cache->set($cacheKey, $urn, $this->cacheTimeout);
+      $this->log('linkedin', 'debug', 'Cached LinkedIn author URN');
+    }
+
+    return $urn;
+  }
+
+
   protected function linkedin(string $text): void
   {
     $token = $this->config['linkedin']['token'];
-    $author = $this->config['linkedin']['author'];
+    $author = $this->getLinkedInAuthorUrn();
 
     $payload = [
-      'author' => $this->config['linkedin']['author'],
+      'author' => $author,
       'lifecycleState' => 'PUBLISHED',
       'specificContent' => [
         'com.linkedin.ugc.ShareContent' => [

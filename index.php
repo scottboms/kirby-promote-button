@@ -23,7 +23,6 @@ Kirby::plugin('scottboms/promote',
               'text' => 'Promote',
               'theme' => 'pink-icon',
               'dialog' => 'promote/?page=' . $page->uuid()->toString(),
-              
             ];
           },
         ],
