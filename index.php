@@ -12,7 +12,7 @@ if (Semver::satisfies(Kirby::version() ?? '0.0.0', '~5.0') === false) {
 	throw new Exception('Promoter Button requires Kirby 5');
 }
 
-Kirby::plugin('scottboms/promote',
+Kirby::plugin('scottboms/promote-button',
   extends: [
     'areas' => [
       'site' => [
