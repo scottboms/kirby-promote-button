@@ -17,14 +17,14 @@
   "license": "MIT",
   "keywords": [
     "kirby",
+    "kirby5",
     "kirby-cms",
     "kirby-plugin",
-    "kirby4",
-    "kirby5"
+    "kirby5-plugin"
   ],
   "require": {
     "php": ">8.1.0 <8.4.0",
-    "getkirby/cms": "^4.0 || ^5.0",
+    "getkirby/cms": "^5.0",
     "getkirby/composer-installer": "^1.1"
   },
   "extra": {
