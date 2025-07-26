@@ -3,13 +3,15 @@
 load(['scottboms\Promote\PlatformPromoter' => __DIR__ . '/classes/PlatformPromoter.php']);
 
 use ScottBoms\Promote\PlatformPromoter;
-use Composer\Semver\Semver;
 use Kirby\Http\Remote;
-use Kirby\Cms\App as Kirby;
+use Kirby\Cms\App;
 
-// validate Kirby version
-if (Semver::satisfies(Kirby::version() ?? '0.0.0', '~5.0') === false) {
-	throw new Exception('Promoter Button requires Kirby 5');
+// shamelessly borrowed from distantnative/retour-for-kirby
+if (
+	version_compare(App::version() ?? '0.0.0', '4.0.1', '<') === true ||
+	version_compare(App::version() ?? '0.0.0', '6.0.0', '>=') === true
+) {
+	throw new Exception('Promote Button requires Kirby v4 or v5');
 }
 
 Kirby::plugin('scottboms/promote-button',
@@ -112,7 +114,7 @@ Kirby::plugin('scottboms/promote-button',
 
   info: [
     'homepage' => 'https://scottboms.com',
-    'version' => '1.0.1',
+    'version' => '1.0.2',
     'license' => 'MIT',
     'authors' => [
       [
