@@ -113,7 +113,7 @@ Kirby::plugin('scottboms/promote-button',
   ],
 
   info: [
-    'homepage' => 'https://scottboms.com',
+    'homepage' => 'https://github.com/scottboms/kirby-promote-button',
     'version' => '1.0.2',
     'license' => 'MIT',
     'authors' => [
