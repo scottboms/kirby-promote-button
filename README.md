@@ -33,7 +33,6 @@ To function, the plugin requires configuration as outlined below.
 
 Add these settings to your `/site/config/config.php` or `/site/config/env.php` file. Define which services you wish to use and then replace the CAPITALIZED PLACEHOLDERS with the necessary values.
 
-
 #### General
 
 ```php
@@ -46,10 +45,11 @@ Add these settings to your `/site/config/config.php` or `/site/config/env.php` f
         'linkedin'
       ],
       'mastodon' => [
-        'url' => 'MASTODON_HOST', // e.g. https://mastodon.social
+        'username' => 'USERNAME', // e.g. scottboms
+        'url' => 'MASTODON_HOST', // e.g. mastodon.social
       ],
       'bluesky' => [
-        'base_url' => 'BLUESKY_HOST', // e.g. https://bsky.social
+        'base_url' => 'BLUESKY_HOST', // e.g. bsky.social
         'handle' => 'USERNAME', // e.g. example.bsky.social‬
       ]
     ],
@@ -87,11 +87,12 @@ If you run your Kirby site locally, the Promote button will function but page ur
 
 ## Blueprint Configuration
 
-There are multiple methods to add [View Buttons](https://getkirby.com/releases/5/view-buttons) to your Kirby installation. To add and configure the look of this button, it can be added to any page by adding the `buttons` [option](https://getkirby.com/docs/reference/panel/blueprints/page#view-buttons) in the Page Blueprint.
+There are multiple methods to add [View Buttons](https://getkirby.com/releases/5/view-buttons) to your Kirby installation. This plugin includes two distinct View Buttons -- the Promote button to access the core features of this plugin, and the Profile button which currently allows a way to quickly go to a Mastodon profile. The buttons can be added to any page by adding the `buttons` [option](https://getkirby.com/docs/reference/panel/blueprints/page#view-buttons) in a Page or Site Blueprint.
 
 ```yml
 buttons:
   promote: true
+  profile: true
 ```
 
 ## Credits

@@ -7,27 +7,27 @@
 		{
 			"name": "Scott Boms",
 			"email": "plugins@scottboms.com",
-      "homepage": "https://scottboms.com"
+			"homepage": "https://scottboms.com"
 		}
 	],
-  "support": {
-    "docs": "https://github.com/scottboms/kirby-promote-button/blob/main/README.md",
-    "source": "https://github.com/scottboms/kirby-promote-button"
-  },
-  "license": "MIT",
-  "keywords": [
-    "kirby",
-    "kirby5",
-    "kirby-cms",
-    "kirby-plugin",
-    "kirby5-plugin"
-  ],
-  "require": {
-    "php": ">8.1.0 <8.4.0",
-    "getkirby/cms": "^5.0",
-    "getkirby/composer-installer": "^1.1"
-  },
-  "extra": {
-    "installer-name": "promote-button"
-  }
+	"support": {
+		"docs": "https://github.com/scottboms/kirby-promote-button/blob/main/README.md",
+		"source": "https://github.com/scottboms/kirby-promote-button"
+	},
+	"license": "MIT",
+	"keywords": [
+		"kirby",
+		"kirby5",
+		"kirby-cms",
+		"kirby-plugin",
+		"kirby5-plugin"
+	],
+	"require": {
+		"php": ">8.1.0 <8.4.0",
+		"getkirby/cms": "^5.0",
+		"getkirby/composer-installer": "^1.1"
+	},
+	"extra": {
+		"installer-name": "promote-button"
+	}
 }
