@@ -8,10 +8,10 @@ use Kirby\Cms\App;
 
 // shamelessly borrowed from distantnative/retour-for-kirby
 if (
-	version_compare(App::version() ?? '0.0.0', '4.0.1', '<') === true ||
-	version_compare(App::version() ?? '0.0.0', '6.0.0', '>=') === true
+	version_compare(App::version() ?? '0.0.0', '5.0.0', '<') === true ||
+	version_compare(App::version() ?? '6.0.0', '7.0.0', '>=') === true
 ) {
-	throw new Exception('Promote Button requires Kirby v4 or v5');
+	throw new Exception('Promote Button requires Kirby v6 or v7');
 }
 
 Kirby::plugin('scottboms/promote-button', [
@@ -160,7 +160,7 @@ Kirby::plugin('scottboms/promote-button', [
 
 	'info' => [
 		'homepage' => 'https://github.com/scottboms/kirby-promote-button',
-		'version'  => '1.1.0',
+		'version'  => '1.1.1',
 		'license'  => 'MIT',
 		'authors'  => [[ 'name' => 'Scott Boms' ]],
 	],

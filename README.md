@@ -92,7 +92,7 @@ There are multiple methods to add [View Buttons](https://getkirby.com/releases/5
 ```yml
 buttons:
   promote: true
-  profile: true
+  profiles: true
 ```
 
 ## Credits
