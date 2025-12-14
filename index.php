@@ -6,12 +6,11 @@ use ScottBoms\Promote\PlatformPromoter;
 use Kirby\Http\Remote;
 use Kirby\Cms\App;
 
-// shamelessly borrowed from distantnative/retour-for-kirby
-if (
-	version_compare(App::version() ?? '0.0.0', '5.0.0', '<') === true ||
-	version_compare(App::version() ?? '6.0.0', '7.0.0', '>=') === true
-) {
-	throw new Exception('Promote Button requires Kirby v6 or v7');
+// kirby version compatibility check
+$version = App::version() ?? '0.0.0';
+
+if (version_compare($version, '6.0.0-alpha.1', '<') || version_compare($version, '8.0.0', '>=')) {
+  throw new Exception('Promote Button requires Kirby v6');
 }
 
 Kirby::plugin('scottboms/promote-button', [
@@ -160,7 +159,7 @@ Kirby::plugin('scottboms/promote-button', [
 
 	'info' => [
 		'homepage' => 'https://github.com/scottboms/kirby-promote-button',
-		'version'  => '1.1.1',
+		'version'  => '6.0.0',
 		'license'  => 'MIT',
 		'authors'  => [[ 'name' => 'Scott Boms' ]],
 	],

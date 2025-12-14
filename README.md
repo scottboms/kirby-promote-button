@@ -2,12 +2,14 @@
 
 ![Plugin Preview](src/assets/kirby-promote-button.png)
 
-A customizable View Button for Kirby 5 that builds on Bastian's demo from the [Kirby 5 Release Show](https://youtube.com/watch?v=o2xkzqiLEUM) adding missing functionality and configuration settings for Mastodon, Bluesky, and LinkedIn as well as other user-experience enhancements.
+A customizable View Button for Kirby that builds on Bastian's demo from the [Kirby 5 Release Show](https://youtube.com/watch?v=o2xkzqiLEUM) adding missing functionality and configuration settings for Mastodon, Bluesky, and LinkedIn as well as other user-experience enhancements.
 
 ## Requirements
 
 This plugin requires Kirby 5.x and newer. It will not work with earlier versions of Kirby.
 
+* Use version 1.x for Kirby 5
+* Use version 6.x for Kirby 6
 
 ## Installation
 

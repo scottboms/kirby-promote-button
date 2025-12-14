@@ -23,8 +23,8 @@
 		"kirby5-plugin"
 	],
 	"require": {
-		"php": ">8.1.0 <8.4.0",
-		"getkirby/cms": "^5.0",
+		"php": ">=8.2.0",
+		"getkirby/cms": "^6.0",
 		"getkirby/composer-installer": "^1.1"
 	},
 	"extra": {
