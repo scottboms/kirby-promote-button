@@ -5,11 +5,12 @@
 	"version": "6.0.0",
 	"type": "kirby-plugin",
 	"license": "MIT",
+
 	"scripts": {
 		"dev": "kirbyup serve src/index.js",
 		"build": "kirbyup src/index.js"
 	},
 	"devDependencies": {
-		"kirbyup": "^4.0.0-alpha.4"
+		"kirbyup": "4.0.0-alpha.5"
 	}
 }

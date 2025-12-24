@@ -137,7 +137,6 @@ class PlatformPromoter
 
 		$response = curl_exec($ch);
 		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		curl_close($ch);
 
 		$this->log('bluesky', 'debug', "cURL auth code: $httpCode");
 		// $this->log('bluesky', 'debug', "cURL auth response: $response");
@@ -176,7 +175,6 @@ class PlatformPromoter
 
 		$postResponse = curl_exec($ch);
 		$postHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		curl_close($ch);
 
 		$this->log('bluesky', 'debug', 'Post HTTP code: ' . $postHttpCode);
 		// $this->log('bluesky', 'debug', 'Post response: ' . $postResponse);
@@ -276,7 +274,6 @@ class PlatformPromoter
 
 		$responseBody = curl_exec($ch);
 		$responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		curl_close($ch);
 
 		$this->log('linkedin', 'debug', 'Response Code: ' . $responseCode);
 		// $this->log('linkedin', 'debug', 'Response Body: ' . $responseBody);

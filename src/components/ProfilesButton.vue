@@ -26,18 +26,18 @@
 export default {
 	name: "KProfilesButton",
 	props: {
-		text:   { String, default: 'Profiles' },
-		icon:   { String, default: 'account' },
-		theme:  { String, default: 'pink-icon' },
-		title:  { String, default: '' },
-		items:  { Array,  default: () => [] }
+		text:   { type: String, default: 'Profiles' },
+		icon:   { type: String, default: 'account' },
+		theme:  { type: String, default: 'pink-icon' },
+		title:  { type: String, default: '' },
+		items:  { type: Array,  default: () => [] }
 	},
 
 	computed: {
 		options() {
 			// k-dropdown-content expects standard dropdown option shape:
 			// { text, icon, link, target, disabled, click, ... }
-			return this.items.map((it) => ({
+			return (this.items || []).map((it) => ({
 				text: it.text,
 				icon: it.icon,
 				disabled: !!it.disabled,
@@ -73,7 +73,7 @@ export default {
 
 		go(item) {
 			// console.log('[ProfilesButton] go →', item);
-			if (item.disabled) return;
+			if (item?.disabled) return;
 			if (item?.link) window.open(item.link, item.target || "_blank");
 		},
 	}
