@@ -1,23 +1,21 @@
 <template>
 	<div class="k-profiles-button">
 		<k-button
+			ref="btn"
 			:dropdown="true"
 			:title="title"
-			variant="filled"
-			:icon="icon"
-			ref="btn"
-			size="sm"
 			:text="text"
+			:icon="icon"
 			:theme="theme"
-			@click="$refs.menu.toggle()"
+			variant="filled"
+			size="sm"
+			@click="toggle"
 		/>
 
 		<k-dropdown-content
 			ref="menu"
-			alignX="end"
-			:anchor="anchor"
+			align-x="end"
 			:options="options"
-			@close="onClose"
 		/>
 	</div>
 </template>
@@ -26,55 +24,64 @@
 export default {
 	name: "KProfilesButton",
 	props: {
-		text:   { String, default: 'Profiles' },
-		icon:   { String, default: 'account' },
-		theme:  { String, default: 'pink-icon' },
-		title:  { String, default: '' },
-		items:  { Array,  default: () => [] }
-	},
-
-	computed: {
-		options() {
-			// k-dropdown-content expects standard dropdown option shape:
-			// { text, icon, link, target, disabled, click, ... }
-			return this.items.map((it) => ({
-				text: it.text,
-				icon: it.icon,
-				disabled: !!it.disabled,
-				click: () => this.go(it),
-				target: it.target || null,
-			}));
+		text: {
+			type: String,
+			default: "Profiles"
 		},
-
-    anchor() {
-			// k-dropdown expects a real dom node
-			const r = this.$refs.btn;
-			return r && (r.$el || r);
+		icon: {
+			type: String,
+			default: "account"
+		},
+		theme: {
+			type: String,
+			default: "pink-icon"
+		},
+		title: {
+			type: String,
+			default: ""
+		},
+		items: {
+			type: Array,
+			default: () => []
 		}
 	},
 
-	mounted() {
-		console.log('[ProfilesButton] mounted', this.options);
-	},
+  computed: {
+    options() {
+      return this.items.map((item) => ({
+        text: item.text,
+        icon: item.icon,
+        link: item.link,
+        target: item.target || "_blank",
+        disabled: Boolean(item.disabled)
+      }));
+    }
+  },
 
 	methods: {
 		toggle() {
+			const button = this.$refs.btn;
 			const menu = this.$refs.menu;
-			if (!menu) return;
 
-			// ensure we have an anchor before toggling
-			if (!this.anchor) return;
-			menu.toggle();
-		},
+			if (!button || !menu) {
+				return;
+			}
 
-		onClose() {
-			// console.log('[ProfilesButton] dropdown closed');
+			const anchor = button.$el || button;
+
+			menu.toggle(anchor);
 		},
 
 		go(item) {
-			// console.log('[ProfilesButton] go →', item);
-			if (item.disabled) return;
-			if (item?.link) window.open(item.link, item.target || "_blank");
+			if (item.disabled || !item.link) {
+				return;
+			}
+
+			window.open(
+				item.link,
+				item.target || "_blank",
+				item.target === "_self" ? undefined : "noopener,noreferrer"
+			);
 		},
 	}
 
