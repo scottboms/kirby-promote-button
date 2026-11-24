@@ -159,7 +159,7 @@ Kirby::plugin('scottboms/promote-button', [
 
 	'info' => [
 		'homepage' => 'https://github.com/scottboms/kirby-promote-button',
-		'version'  => '1.1.2',
+		'version'  => '1.1.3',
 		'license'  => 'MIT',
 		'authors'  => [[ 'name' => 'Scott Boms' ]],
 	],
