@@ -17,7 +17,7 @@ if (
 Kirby::plugin('scottboms/promote-button',
   info: [
 		'homepage' => 'https://github.com/scottboms/kirby-promote-button',
-		'version'  => '6.0.0',
+		'version'  => '6.0.1',
 		'license'  => 'MIT',
 		'authors'  => [[ 'name' => 'Scott Boms' ]],
 	],
